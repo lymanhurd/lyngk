@@ -1,21 +1,23 @@
-MIT License
+Richard Rognlie's PBMSERV Source Code License   2001.07.11 -- rev 1
 
-Copyright (c) 2017 Lyman Hurd
+Unless otherwise stated in a source module, the source code is
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+    (c) 1994-2001  Richard Rognlie  All rights reserved
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Unless otherwise stated in a source module, the source modules contained
+in this directory can be used for the purpose of enhancing Richard Rognlie's
+PBeM Server <pbmserv@gamerz.net>, either by fixing bugs, adding new
+functionality, or as a basis for new games.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Permission is granted to set up "test" PBeM servers, so long as the intent
+is to reintegrate any games/etc. developed by use of this code back into
+the main server <pbmserv@gamerz.net>.
+
+If you wish to set up a "competing" game server, please check with 
+Richard Rognlie <rrognlie@gamerz.net> for permission.  
+
+If you wish to use the code for any other purpose, ASK.
+
+Regards,
+
+Richard Rognlie <rrognlie@gamerz.net>
