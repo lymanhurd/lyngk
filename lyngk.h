@@ -29,7 +29,7 @@ class GameMode : public ReadWriteIntList {
 class Lyngk: public Board2D {
  public:
   virtual const char *GameType() { return "Lyngk";}
-  virtual int MoveWidth() { return 15;}
+  virtual int MoveWidth() { return 7;}  // e.g., I,C1-C7
   virtual const char *PlayerNames(int n) { return "";}
   virtual const char *MakeMove(const char *move);
   virtual int IsGameOver(const char *&winner);
@@ -48,6 +48,15 @@ class Lyngk: public Board2D {
   const char* claimed(int player);
   const char* available();
   void shuffle(int* array, int len);
+  int height(int row, int col);
+  bool player_owns(int row, int col);
+  bool claim_stack(int row, int col);
+  bool move_stack(int src_row, int src_col,
+		  int dest_row, int dest_col);
+  bool claim_color(char color);
+
+  int color_index(char color);
+
   bool CannotMove(int player);
 
   PlayerColors player_colors_;
