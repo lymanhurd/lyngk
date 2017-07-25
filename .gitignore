@@ -1,3 +1,9 @@
+# executable
+lyngk
+
+#emacs backups
+*~
+
 # Prerequisites
 *.d
 

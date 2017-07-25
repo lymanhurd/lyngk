@@ -57,6 +57,10 @@ class Lyngk: public Board2D {
 
   int color_index(char color);
 
+  bool stack_owned(int row, int col);
+
+  bool stack_neutral(int row, int col);
+
   bool CannotMove(int player);
 
   PlayerColors player_colors_;

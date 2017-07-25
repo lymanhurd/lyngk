@@ -69,9 +69,13 @@ const char *Lyngk::MakeMove(const char *move) {
     src_col = tolower(src_col);
     dest_col = tolower(dest_col);
     sprintf(new_move, "%c,%c%c-%c%c", claimed, src_col, src_row, dest_col, dest_row);
+    if (color_index(claimed) == -1) {
+      return (char*) Error("Invalid color %c.", claimed);
+    }
     if (!claim_color(claimed)) {
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-      return (char*) Error("Color %s cannot be claimed right now.", COLOR_NAMES[color_index(claimed)]);
+      return (char*) Error("Color %s cannot be claimed right now.",
+			   COLOR_NAMES[color_index(claimed)]);
     }
   } else if (sscanf(move, "%c%c-%c%c", &src_col, &src_row, &dest_col, &dest_row) == 4) {
     src_col = tolower(src_col);
@@ -178,14 +182,14 @@ int Lyngk::MustSkip() {
 // Claiming colors...
 const char* Lyngk::claimed(int player) {
   static char claim[12];
-  if (player_colors_[2*player] == 0) {
+  if (player_colors_[2 * player] == 0) {
     return "";
-  } else if (player_colors_[2*player+1] == 0) {
-    sprintf(claim, "%s", COLOR_NAMES[player_colors_[2*player]]);
+  } else if (player_colors_[2 * player + 1] == 0) {
+    sprintf(claim, "%s", COLOR_NAMES[player_colors_[2 * player]]);
     return claim;
   } else {
-    sprintf(claim, "%s,%s", COLOR_NAMES[player_colors_[2*player]],
-	    COLOR_NAMES[player_colors_[2*player+1]]);
+    sprintf(claim, "%s,%s", COLOR_NAMES[player_colors_[2 * player]],
+	    COLOR_NAMES[player_colors_[2 * player + 1]]);
     return claim;
   }
 };
@@ -253,6 +257,13 @@ bool Lyngk::move_stack(int src_row, int src_col,
   if (src_height  == 0 ||  dest_height == 0) {
     return false;
   }
+  if (stack_neutral(src_row, src_col)) {
+    if (src_height < dest_height) {
+      return false;
+    }
+  } else if (!stack_owned(src_row, src_col)) {
+    return false;
+  }
   // check stack contents
   for (int i = 0; i < src_height; i++) {
     char marker = GetAt(src_row, src_col * MAX_STACK + i);
@@ -299,10 +310,23 @@ bool Lyngk::claim_color(char color) {
 }
 
 int Lyngk::color_index(char color) {
-  int idx = 0;
+  int idx = -1;
   const char* ptr = strchr(COLOR_LETTERS, color);
   if (ptr) {
     idx = ptr - COLOR_LETTERS;
   }
   return idx;
+}
+
+bool Lyngk::stack_owned(int row, int col) {
+  int idx = color_index(GetAt(row, col * MAX_STACK));
+  return idx == player_colors_[2 * CurrentPlayer()] ||
+    idx == player_colors_[2 * CurrentPlayer() + 1];
+}
+
+bool Lyngk::stack_neutral(int row, int col) {
+  int idx = color_index(GetAt(row, col * MAX_STACK));
+  return !stack_owned(row, col) &&
+    !(idx == player_colors_[2 * (1 - CurrentPlayer())] ||
+      idx == player_colors_[2 * (1 - CurrentPlayer()) + 1]);
 }
