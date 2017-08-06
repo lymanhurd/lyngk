@@ -29,7 +29,7 @@ class GameMode : public ReadWriteIntList {
 class Lyngk: public Board2D {
  public:
   virtual const char *GameType() { return "Lyngk";}
-  virtual int MoveWidth() { return 7;}  // e.g., I,C1-C7
+  virtual int MoveWidth() { return 7;}  // e.g., I,c1-c2
   virtual const char *PlayerNames(int n) { return "";}
   virtual const char *MakeMove(const char *move);
   virtual int IsGameOver(const char *&winner);
@@ -45,21 +45,25 @@ class Lyngk: public Board2D {
   virtual int MustSkip();
 
  private:
-  const char* claimed(int player);
-  const char* available();
-  void shuffle(int* array, int len);
-  int height(int row, int col);
-  bool player_owns(int row, int col);
-  bool claim_stack(int row, int col);
-  bool move_stack(int src_row, int src_col,
+
+  // ASCII Display Routines
+  virtual void PrintBoardASCII(FILE *fp);
+  void PrintDisplayRow(FILE* fp, int display_row);
+  const char* ClaimedColors(int player);
+  const char* AvailableColors();
+
+  void ShufflePieces(int* array, int len);
+  int StackHeight(int row, int col);
+  bool ClaimStack(int row, int col);
+  bool MoveStack(int src_row, int src_col,
 		  int dest_row, int dest_col);
-  bool claim_color(char color);
+  bool ClaimColor(char color);
 
-  int color_index(char color);
+  int ColorIndex(char color);
 
-  bool stack_owned(int row, int col);
+  bool IsStackOwnedByCurrentPlayer(int row, int col);
 
-  bool stack_neutral(int row, int col);
+  bool IsStackNeutral(int row, int col);
 
   bool CannotMove(int player);
 

@@ -5,6 +5,9 @@
 //
 // Lyngk client version 1.00 updated 7/17/2017 LPH
 
+#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+
+#include <assert.h>
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>
@@ -22,88 +25,9 @@
 #define EMPTY '.'
 #define JOKER 'J'
 
-int COLUMN_HEIGHTS[NUM_COLS] = {1, 4, 7, 6, 7, 6, 7, 4, 1};
-const char* COLOR_NAMES[] = {"None", "Ivory", "Blue", "Red",
-			     "Green","blacK", "Joker"};
 const char* COLOR_LETTERS = "-IBRGKJ";
 
-void Lyngk::shuffle(int* array, int len) {
-  while (len > 1) {
-    int idx = ::random() % len;
-    int t = array[len - 1];
-    array[len - 1] = array[idx];
-    array[idx] = t;
-    len--;
-  }
-}
-
-// Read in the game state.
-int Lyngk::ReadBoard(GameFile &game) {
-  int result = Board2D::ReadBoard(game);
-  result *= player_colors_.Read(game);
-  result *= stacks_.Read(game);
-  result *= game_mode_.Read(game);
-  return result;
-}
-
-// Write the game state.
-int Lyngk::WriteBoard(GameFile &game) {
-  int result = Board2D::WriteBoard(game);
-  result *= player_colors_.Write(game);
-  result *= stacks_.Write(game);
-  result *= game_mode_.Write(game);
-  return result;
-}
-
-// MakeMove - the input move is reformatted into the array newmove.
-const char *Lyngk::MakeMove(const char *move) {
-  static char new_move[8];
-  strncpy(new_move, move, 8);
-  char claimed = EMPTY;
-  char src_col;
-  char src_row;
-  char dest_col;
-  char dest_row;
-  if (sscanf(move, "%c,%c%c-%c%c", &claimed, &src_col, &src_row, &dest_col, &dest_row) == 5) {
-    claimed = toupper(claimed);
-    src_col = tolower(src_col);
-    dest_col = tolower(dest_col);
-    sprintf(new_move, "%c,%c%c-%c%c", claimed, src_col, src_row, dest_col, dest_row);
-    if (color_index(claimed) == -1) {
-      return (char*) Error("Invalid color %c.", claimed);
-    }
-    if (!claim_color(claimed)) {
-#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-      return (char*) Error("Color %s cannot be claimed right now.",
-			   COLOR_NAMES[color_index(claimed)]);
-    }
-  } else if (sscanf(move, "%c%c-%c%c", &src_col, &src_row, &dest_col, &dest_row) == 4) {
-    src_col = tolower(src_col);
-    dest_col = tolower(dest_col);
-    sprintf(new_move, "%c%c-%c%c", src_col, src_row, dest_col, dest_row);
-  } else {
-#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-    return (char*) Error("Format is: [ClaimedColor,]RowCol-RowCol");
-  }
-  if (!move_stack(src_row - '1', src_col- 'a', dest_row - '1', dest_col - 'a')) {
-#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
-    return (char*) Error("Cannot move stack from %c%c to %c%c.", src_col, src_row, dest_col, dest_row);
-  }    
-  return new_move;
-  // return (char *) new_move;
-}
-
-// The game ends when neither player can move.
-int Lyngk::IsGameOver(const char *&winner) {
-  return CannotMove(CurrentPlayer()) && CannotMove(1 - CurrentPlayer());
-}
-
-int Lyngk::OnBoard(int row, int col) {
-  return row < COLUMN_HEIGHTS[col];
-}
-
 // Initialize game.
-
 int Lyngk::Init() {
   player_colors_.Init().Add(0).Add(0).Add(0).Add(0);
   stacks_.Init().Add(0).Add(0);
@@ -112,14 +36,12 @@ int Lyngk::Init() {
     if (abbrev(parameters[i], "-stack6", 2)) {
       stack6_mode = true; 
     } else {
-#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
       return Error("Invalid %s parameter '%s'", GameType(), parameters[i]);
     }
   }
   game_mode_.Init().Add(stack6_mode);
 
   if (players.Count() != 2) {
-#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
     return Error("%s is a two player game.  %d cannot play.",
 		 GameType(), players.Count());
   }
@@ -142,7 +64,7 @@ int Lyngk::Init() {
 
   idx = 0;
   // shuffle pieces
-  shuffle(pieces, sizeof(pieces)/sizeof(int));
+  ShufflePieces(pieces, sizeof(pieces)/sizeof(int));
   for (int row = 0; row < NUM_ROWS; row++) {
     for (int col = 0; col < NUM_COLS; col++) {
       if (OnBoard(row, col)) {
@@ -154,21 +76,105 @@ int Lyngk::Init() {
   return 1;
 }
 
-// PrintBoard.
-void Lyngk::PrintBoard(FILE *fp) {
-  if (game_mode_[0]) {
-    fprintf(fp, "Stack 6 Mode\n");
+void Lyngk::ShufflePieces(int* array, int len) {
+  while (len > 1) {
+    int idx = ::random() % len;
+    int t = array[len - 1];
+    array[len - 1] = array[idx];
+    array[idx] = t;
+    len--;
   }
-  fprintf(fp, "Available Colors: (%s)\n", available());
-  fprintf(fp, "%s: %d stacks (%s) claimed.\n", players[0], stacks_[0],
-	  claimed(0));
-  fprintf(fp, "%s: %d stacks (%s) claimed.\n\n", players[1], stacks_[1],
-	  claimed(1));
-  Board2D::PrintForHTML(fp);
+}
+
+// Routines that serialize and deserialize the state of the game.
+// The state consists of the board position, as well as the list
+// of colors (up to two) claimed by each player as well as whether
+// the game is being played with the six stack optional rule (not
+// yet implemented).
+
+// Read in the current game state.
+int Lyngk::ReadBoard(GameFile &game) {
+  int result = Board2D::ReadBoard(game);
+  result *= player_colors_.Read(game);
+  result *= stacks_.Read(game);
+  result *= game_mode_.Read(game);
+  return result;
+}
+
+// Write the game state.
+int Lyngk::WriteBoard(GameFile &game) {
+  int result = Board2D::WriteBoard(game);
+  result *= player_colors_.Write(game);
+  result *= stacks_.Write(game);
+  result *= game_mode_.Write(game);
+  return result;
+}
+
+// Routines to implement performing a move.  A move has two parts.
+//
+// First the player may optionally claim a color if they have not
+// already claimed two colors.  Only the five basic colors may be
+// claimed and a player cannot claim a previously claimed color.
+//
+// Next the player specifies the location of a source and destination
+// stack and the source stack is placed on top of the destinaion stack.
+// The two stacks must be in a straight line or connected via a Lyngk
+// move explaned below.  Furthermore, the combined stack cannot exceed
+// height 5 (if the base game) and colors cannot be duplicated except
+// that jokers can represent any color not already present and a stack
+// can have multiple jokers.
+
+const char* COLOR_NAMES[] = {"None", "Ivory", "Blue", "Red",
+			     "Green","blacK", "Joker"};
+
+// MakeMove - the input move is reformatted into the array newmove.
+const char *Lyngk::MakeMove(const char *move) {
+  static char new_move[8];
+  strncpy(new_move, move, 8);
+  char claimed = EMPTY;
+  char src_col;
+  char src_row;
+  char dest_col;
+  char dest_row;
+  if (sscanf(move, "%c,%c%c-%c%c", &claimed, &src_col, &src_row, &dest_col, &dest_row) == 5) {
+    claimed = toupper(claimed);
+    src_col = tolower(src_col);
+    dest_col = tolower(dest_col);
+    sprintf(new_move, "%c,%c%c-%c%c", claimed, src_col, src_row, dest_col, dest_row);
+    if (ColorIndex(claimed) == -1) {
+      return (char*) Error("Invalid color %c.", claimed);
+    }
+    if (!ClaimColor(claimed)) {
+      return (char*) Error("Color %s cannot be claimed right now.",
+			   COLOR_NAMES[ColorIndex(claimed)]);
+    }
+  } else if (sscanf(move, "%c%c-%c%c", &src_col, &src_row, &dest_col, &dest_row) == 4) {
+    src_col = tolower(src_col);
+    dest_col = tolower(dest_col);
+    sprintf(new_move, "%c%c-%c%c", src_col, src_row, dest_col, dest_row);
+  } else {
+    return (char*) Error("Format is: [ClaimedColor,]RowCol-RowCol");
+  }
+  if (!MoveStack(src_row - '1', src_col- 'a', dest_row - '1', dest_col - 'a')) {
+    return (char*) Error("Cannot move stack from %c%c to %c%c.", src_col, src_row, dest_col, dest_row);
+  }    
+  return new_move;
+}
+
+// The game ends when neither player can move.
+int Lyngk::IsGameOver(const char *&winner) {
+  return CannotMove(CurrentPlayer()) && CannotMove(1 - CurrentPlayer());
 }
 
 bool Lyngk::CannotMove(int player) {
-  return false;
+  return false;  // TODO(lyman): implement.
+}
+
+// Utility functions.
+int COLUMN_HEIGHTS[NUM_COLS] = {1, 4, 7, 6, 7, 6, 7, 4, 1};
+
+int Lyngk::OnBoard(int row, int col) {
+  return row < COLUMN_HEIGHTS[col];
 }
 
 //----------
@@ -179,44 +185,7 @@ int Lyngk::MustSkip() {
   return CannotMove(CurrentPlayer()); 
 };
 
-// Claiming colors...
-const char* Lyngk::claimed(int player) {
-  static char claim[12];
-  if (player_colors_[2 * player] == 0) {
-    return "";
-  } else if (player_colors_[2 * player + 1] == 0) {
-    sprintf(claim, "%s", COLOR_NAMES[player_colors_[2 * player]]);
-    return claim;
-  } else {
-    sprintf(claim, "%s,%s", COLOR_NAMES[player_colors_[2 * player]],
-	    COLOR_NAMES[player_colors_[2 * player + 1]]);
-    return claim;
-  }
-};
-
-const char* Lyngk::available() {
-  static char colors[21];
-  colors[0] = '\0';
-  for (int i = 1; i < 6; i++) {
-    bool found = false;
-    for (int j = 0; j < 4; j++) {
-      if (player_colors_[j] == i) {
-	found = true;
-      }
-    }
-    if (!found) {
-      if (colors[0] == '\0') {
-	strncat(colors, COLOR_NAMES[i], 8);
-      } else {
-	strncat(colors, ",", 1);
-	strncat(colors, COLOR_NAMES[i], 8);
-      }
-    }
-  }
-  return colors;
-}
-
-int Lyngk::height(int row, int col) {
+int Lyngk::StackHeight(int row, int col) {
   if (!OnBoard(row, col)) {
     return -1;
   }
@@ -229,14 +198,8 @@ int Lyngk::height(int row, int col) {
   return stack_height;
 }
 
-bool Lyngk::player_owns(int row, int col) {
-  char top = GetAt(row, col * MAX_STACK);
-  return top == COLOR_LETTERS[player_colors_[2 * CurrentPlayer()]] ||
-    top == COLOR_LETTERS[player_colors_[2 * CurrentPlayer() + 1]];
-}
-
-bool Lyngk::claim_stack(int row, int col) {
-  if (height(row, col) == MAX_STACK && player_owns(row, col)) {
+bool Lyngk::ClaimStack(int row, int col) {
+  if (StackHeight(row, col) == MAX_STACK && IsStackOwnedByCurrentPlayer(row, col)) {
     stacks_[CurrentPlayer()] += 1;
     for (int i = 0; i < MAX_STACK; i++) {
       PutAt(row, col*MAX_STACK + i, EMPTY);
@@ -246,10 +209,10 @@ bool Lyngk::claim_stack(int row, int col) {
   return false;
 }
 
-bool Lyngk::move_stack(int src_row, int src_col,
+bool Lyngk::MoveStack(int src_row, int src_col,
 		       int dest_row, int dest_col) {
-  int src_height = height(src_row, src_col);
-  int dest_height = height(dest_row, dest_col);
+  int src_height = StackHeight(src_row, src_col);
+  int dest_height = StackHeight(dest_row, dest_col);
   // check stack heights
   if (src_height + dest_height > MAX_STACK) {
     return false;
@@ -257,11 +220,11 @@ bool Lyngk::move_stack(int src_row, int src_col,
   if (src_height  == 0 ||  dest_height == 0) {
     return false;
   }
-  if (stack_neutral(src_row, src_col)) {
+  if (IsStackNeutral(src_row, src_col)) {
     if (src_height < dest_height) {
       return false;
     }
-  } else if (!stack_owned(src_row, src_col)) {
+  } else if (!IsStackOwnedByCurrentPlayer(src_row, src_col)) {
     return false;
   }
   // check stack contents
@@ -287,15 +250,15 @@ bool Lyngk::move_stack(int src_row, int src_col,
     PutAt(src_row, src_col * MAX_STACK + i, EMPTY);
   }
   // Remove a stack of if appropriate.
-  claim_stack(dest_row, dest_col);
+  ClaimStack(dest_row, dest_col);
   return true;
 }
 
-bool Lyngk::claim_color(char color) {
+bool Lyngk::ClaimColor(char color) {
   if (player_colors_[2 * CurrentPlayer() + 1]) {
     return false;  // player has already claimed two colors
   }
-  int idx = color_index(color);
+  int idx = ColorIndex(color);
   if (player_colors_[2 * CurrentPlayer()] == idx ||
       player_colors_[2 * (1 - CurrentPlayer())] == idx ||
       player_colors_[2 * (1 - CurrentPlayer()) + 1] == idx) {
@@ -309,7 +272,7 @@ bool Lyngk::claim_color(char color) {
   return true;
 }
 
-int Lyngk::color_index(char color) {
+int Lyngk::ColorIndex(char color) {
   int idx = -1;
   const char* ptr = strchr(COLOR_LETTERS, color);
   if (ptr) {
@@ -318,15 +281,129 @@ int Lyngk::color_index(char color) {
   return idx;
 }
 
-bool Lyngk::stack_owned(int row, int col) {
-  int idx = color_index(GetAt(row, col * MAX_STACK));
+bool Lyngk::IsStackOwnedByCurrentPlayer(int row, int col) {
+  int idx = ColorIndex(GetAt(row, col * MAX_STACK));
   return idx == player_colors_[2 * CurrentPlayer()] ||
     idx == player_colors_[2 * CurrentPlayer() + 1];
 }
 
-bool Lyngk::stack_neutral(int row, int col) {
-  int idx = color_index(GetAt(row, col * MAX_STACK));
-  return !stack_owned(row, col) &&
+bool Lyngk::IsStackNeutral(int row, int col) {
+  int idx = ColorIndex(GetAt(row, col * MAX_STACK));
+  return !IsStackOwnedByCurrentPlayer(row, col) &&
     !(idx == player_colors_[2 * (1 - CurrentPlayer())] ||
       idx == player_colors_[2 * (1 - CurrentPlayer()) + 1]);
+}
+
+//    c7 e7 g7
+//      d6 f6
+//    c6 e6 g6
+//   b4 d5 f5 h4
+//    c5 e5 g5
+//   b3 d4 f4 h3
+// a1 c4 e4 g4 i1
+//   b2 d3 f3 h2
+//    c3 e3 g3
+//   b1 d2 f2 h1
+//    c2 e2 g2
+//      d1 f1
+//    c1 e1 g1
+
+// PrintBoard.
+void Lyngk::PrintBoard(FILE *fp) {
+  PrintBoardASCII(fp);
+}
+
+void Lyngk::PrintBoardASCII(FILE *fp) {
+  if (game_mode_[0]) {
+    fprintf(fp, "Stack 6 Mode\n");
+  }
+  fprintf(fp, "Available Colors: (%s)\n", AvailableColors());
+  fprintf(fp, "%s: %d stacks (%s) claimed.\n", players[0], stacks_[0],
+	  ClaimedColors(0));
+  fprintf(fp, "%s: %d stacks (%s) claimed.\n\n", players[1], stacks_[1],
+	  ClaimedColors(1));
+  fprintf(fp, "   A   B   C   D   E   F   G   H   I\n");
+  fprintf(fp, "   1   4   7   6   7   6   7   4   1\n\n");
+  for (int i = 0; i < 13; i++) {
+    PrintDisplayRow(fp, i);
+  }
+  fprintf(fp, "\n");
+  fprintf(fp, "   A   B   C   D   E   F   G   H   I\n");
+  fprintf(fp, "   1   1   1   1   1   1   1   1   1\n");
+}
+
+int DISPLAY_TABLE[13][5][2] = {{{-1, -1}, {6, 2}, {6, 4}, {6, 6},   {-1, -1}},
+			       {{-1, -1}, {5, 3}, {5, 5}, {-1, -1}, {-1, -1}},
+			       {{-1, -1}, {5, 2}, {5, 4}, {5, 6},   {-1, -1}},
+			       {{3, 1},   {4, 3}, {4, 5}, {3, 7},   {-1, -1}},
+			       {{-1, -1}, {4, 2}, {4, 4}, {4, 6},   {-1, -1}},
+			       {{2, 1},   {3, 3}, {3, 5}, {2, 7},   {-1, -1}},
+			       {{0, 0},   {3, 2}, {3, 4}, {3, 6},   {0, 8}},
+			       {{1, 1},   {2, 3}, {2, 5}, {1, 7},   {-1, -1}},
+			       {{-1, -1}, {2, 2}, {2, 4}, {2, 6},   {-1, -1}},
+			       {{0, 1},   {1, 3}, {1, 5}, {0, 7},   {-1, -1}},
+			       {{-1, -1}, {1, 2}, {1, 4}, {1, 6},   {-1, -1}},
+			       {{-1, -1}, {0, 3}, {0, 5}, {-1, -1}, {-1, -1}},
+			       {{-1, -1}, {0, 2}, {0, 4}, {0, 6},   {-1, -1}}};
+
+// Print each stack in a field of width 7.
+void Lyngk::PrintDisplayRow(FILE* fp, int display_row) {
+  if (display_row % 2) {
+    fprintf(fp, "    ");  // 4 spaces offset for every other row
+  }
+  for (int display_col = 0; display_col < 5; display_col++) {
+    int row = DISPLAY_TABLE[display_row][display_col][0];
+    int col = DISPLAY_TABLE[display_row][display_col][1];
+    if (row == -1) {
+      fprintf(fp, "        ");  // 8 spaces
+    } else {
+      int h = StackHeight(row, col);
+      for (int i = 0; i < (7 - h + 1) / 2; i++) {  // padding to 7 bytes rounding down
+	fprintf(fp, " ");
+      }
+      for (int i = 0; i < h; i++) {
+	fprintf(fp, "%c", GetAt(row, col * MAX_STACK + i));
+      }
+      for (int i = 0; i <= (7 - h) / 2; i++) {  // the other side rounds up
+	fprintf(fp, " ");
+      }
+    }
+  }
+  fprintf(fp, "\n");
+}
+
+const char* Lyngk::ClaimedColors(int player) {
+  static char claim[12];
+  if (player_colors_[2 * player] == 0) {
+    return "";
+  } else if (player_colors_[2 * player + 1] == 0) {
+    sprintf(claim, "%s", COLOR_NAMES[player_colors_[2 * player]]);
+    return claim;
+  } else {
+    sprintf(claim, "%s,%s", COLOR_NAMES[player_colors_[2 * player]],
+	    COLOR_NAMES[player_colors_[2 * player + 1]]);
+    return claim;
+  }
+};
+
+const char* Lyngk::AvailableColors() {
+  static char colors[21];
+  colors[0] = '\0';
+  for (int i = 1; i < 6; i++) {
+    bool found = false;
+    for (int j = 0; j < 4; j++) {
+      if (player_colors_[j] == i) {
+	found = true;
+      }
+    }
+    if (!found) {
+      if (colors[0] == '\0') {
+	strncat(colors, COLOR_NAMES[i], 8);
+      } else {
+	strncat(colors, ",", 1);
+	strncat(colors, COLOR_NAMES[i], 8);
+      }
+    }
+  }
+  return colors;
 }
