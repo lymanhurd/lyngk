@@ -54,21 +54,40 @@ class Lyngk: public Board2D {
 
   void ShufflePieces(int* array, int len);
   int StackHeight(int row, int col);
-  bool ClaimStack(int row, int col);
-  bool MoveStack(int src_row, int src_col,
-		  int dest_row, int dest_col);
-  bool ClaimColor(char color);
+
+  void ClaimStack(int player, int row, int col);
+
+  // In the case in which we are running this function
+  // to determine if a player has any legal move, we
+  // allow for the possiblity that they could claim
+  // a neutral color.
+  int CanMoveStack(int player,
+		   int src_row,
+		   int src_col,
+		   int dest_row,
+		   int dest_col,
+		   bool can_claim_color=false);
+
+  int MoveStack(int player,
+		int src_row,
+		int src_col,
+		int dest_row,
+		int dest_col);
+
+  int ClaimColor(char color);
 
   int ColorIndex(char color);
 
-  bool IsStackOwnedByCurrentPlayer(int row, int col);
-
-  bool IsStackNeutral(int row, int col);
+  int StackOwner(int row, int col);
 
   bool CannotMove(int player);
 
+  // Player 0 claims player_colors_[0], [1] and Player 1 [2], [3].
   PlayerColors player_colors_;
+
   Stacks stacks_;
+
+  // Only 0 (normal game) is implemented currently.
   GameMode game_mode_;
 };
 #endif  // Lyngk_H
