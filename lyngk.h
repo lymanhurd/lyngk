@@ -68,6 +68,10 @@ class Lyngk: public Board2D {
 		   int dest_col,
 		   bool can_claim_color=false);
 
+  bool InUnobstructedLine(int src_row, int src_col, int dest_row, int dest_col);
+
+  bool ConnectedByLyngkMove(int src_row, int src_col, int dest_row, int dest_col);
+
   int MoveStack(int player,
 		int src_row,
 		int src_col,
@@ -81,6 +85,8 @@ class Lyngk: public Board2D {
   int StackOwner(int row, int col);
 
   bool CannotMove(int player);
+  int GetWinner();  // - 1 signifies a draw.
+  int StackCount(int player, int height);
 
   // Player 0 claims player_colors_[0], [1] and Player 1 [2], [3].
   PlayerColors player_colors_;
