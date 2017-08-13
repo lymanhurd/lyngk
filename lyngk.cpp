@@ -20,8 +20,6 @@
 #include "strutl.h"
 
 #define MAX_STACK 5
-#define NUM_COLS 9
-#define NUM_ROWS 7
 #define EMPTY '.'
 #define JOKER 'J'
 
@@ -343,13 +341,21 @@ int Lyngk::CanMoveStack(int player,
 	return Error("%s: %s", base_error,
 		     "Source and destination are not connected by an unobstructed line.");
       }
-    } else if (!ConnectedByLyngkMove(src_col, src_col, dest_row, dest_col)) {
-      if (test_mode) {
-	return 0;
-      } else {
-	return Error("%s: %s", base_error,
-		     "Source and destination are not connected by an unobstructed line"
-		     " or Lyngk move.");
+    } else {
+      bool visited[NUM_ROWS][NUM_COLS];
+      for (int r = 0; r < NUM_ROWS; r++) {
+	for (int c = 0; c < NUM_COLS; c++) {
+	  visited[r][c] = false;
+	}
+      }
+      if (!ConnectedByLyngkMove(src_col, src_col, dest_row, dest_col, visited)) {
+	if (test_mode) {
+	  return 0;
+	} else {
+	  return Error("%s: %s", base_error,
+		       "Source and destination are not connected by an unobstructed line"
+		       " or Lyngk move.");
+	}
       }
     }
   }
@@ -413,7 +419,26 @@ bool Lyngk::InUnobstructedLine(int src_row, int src_col, int dest_row, int dest_
   return false;
 }
 
-bool Lyngk::ConnectedByLyngkMove(int src_row, int src_col, int dest_row, int dest_col) {
+bool Lyngk::ConnectedByLyngkMove(int src_row, int src_col, int dest_row, int dest_col,
+				 bool (&visited)[NUM_ROWS][NUM_COLS]) {
+  // A lyngk move must start with a stack you control.
+  if (StackOwner(src_row, src_col) != CurrentPlayer()) {
+    return false;
+  }
+  if (InUnobstructedLine(src_row, src_col, dest_row, dest_col)) {
+    return true;
+  }
+  char color = GetAt(src_row, src_col * MAX_STACK);
+  visited[src_row][src_col] = true;
+  for (int row = 0; row < NUM_ROWS; row++) {
+    for (int col = 0; col < NUM_COLS; col++) {
+      if (OnBoard(row, col) && color == GetAt(row, col * MAX_STACK)) {
+        if (ConnectedByLyngkMove(row, col, dest_row, dest_col, visited)) {
+	  return true;
+	}
+      }
+    }
+  }
   return false;
 }
 

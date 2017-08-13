@@ -5,6 +5,9 @@
 
 // Lyngk client version 1.00 updated 7/19/2017 Lymam P. Hurd
 
+#define NUM_ROWS 7
+#define NUM_COLS 9
+
 // Colors claimed by the players 4 total (two for each).
 
 class PlayerColors : public ReadWriteIntList {
@@ -70,7 +73,8 @@ class Lyngk: public Board2D {
 
   bool InUnobstructedLine(int src_row, int src_col, int dest_row, int dest_col);
 
-  bool ConnectedByLyngkMove(int src_row, int src_col, int dest_row, int dest_col);
+  bool ConnectedByLyngkMove(int src_row, int src_col, int dest_row, int dest_col,
+			      bool (&visited)[NUM_ROWS][NUM_COLS]);
 
   int MoveStack(int player,
 		int src_row,
@@ -90,7 +94,6 @@ class Lyngk: public Board2D {
 
   // Player 0 claims player_colors_[0], [1] and Player 1 [2], [3].
   PlayerColors player_colors_;
-
   Stacks stacks_;
 
   // Only 0 (normal game) is implemented currently.
