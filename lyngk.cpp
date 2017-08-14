@@ -235,7 +235,7 @@ bool Lyngk::CannotMove(int player) {
 int COLUMN_HEIGHTS[NUM_COLS] = {1, 4, 7, 6, 7, 6, 7, 4, 1};
 
 int Lyngk::OnBoard(int row, int col) {
-  return row < COLUMN_HEIGHTS[col];
+  return row >= 0 && col >= 0 && col < NUM_COLS && row < COLUMN_HEIGHTS[col];
 }
 
 //----------
@@ -274,6 +274,14 @@ int Lyngk::CanMoveStack(int player,
 			int dest_row,
 			int dest_col,
 			bool test_mode) {
+  if (!OnBoard(src_row, src_col)) {
+    return Error("Source intersection %c%c is invalid.",
+		 'a' + src_col, '1' + src_row);
+  }
+  if (!OnBoard(dest_row, dest_col)) {
+    return Error("Destination intersection %c%c is invalid.",
+		 'a' + dest_col, '1' + dest_row);
+  }
   int src_height = StackHeight(src_row, src_col);
   int dest_height = StackHeight(dest_row, dest_col);
   char base_error[26];
@@ -348,7 +356,7 @@ int Lyngk::CanMoveStack(int player,
 	  visited[r][c] = false;
 	}
       }
-      if (!ConnectedByLyngkMove(src_col, src_col, dest_row, dest_col, visited)) {
+      if (!ConnectedByLyngkMove(src_row, src_col, dest_row, dest_col, visited)) {
 	if (test_mode) {
 	  return 0;
 	} else {
@@ -432,7 +440,7 @@ bool Lyngk::ConnectedByLyngkMove(int src_row, int src_col, int dest_row, int des
   visited[src_row][src_col] = true;
   for (int row = 0; row < NUM_ROWS; row++) {
     for (int col = 0; col < NUM_COLS; col++) {
-      if (OnBoard(row, col) && color == GetAt(row, col * MAX_STACK)) {
+      if (!visited[row][col] && OnBoard(row, col) && color == GetAt(row, col * MAX_STACK)) {
         if (ConnectedByLyngkMove(row, col, dest_row, dest_col, visited)) {
 	  return true;
 	}
