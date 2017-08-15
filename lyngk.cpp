@@ -65,6 +65,7 @@ int Lyngk::Init() {
 
   idx = 0;
   // shuffle pieces
+  srand(atoi(boardno));
   ShufflePieces(pieces, sizeof(pieces)/sizeof(int));
   for (int row = 0; row < NUM_ROWS; row++) {
     for (int col = 0; col < NUM_COLS; col++) {
@@ -281,6 +282,9 @@ int Lyngk::CanMoveStack(int player,
   if (!OnBoard(dest_row, dest_col)) {
     return Error("Destination intersection %c%c is invalid.",
 		 'a' + dest_col, '1' + dest_row);
+  }
+  if (GetAt(src_row, src_col * MAX_STACK) == 'J') {
+    return Error("You cannot move jokers independently.");
   }
   int src_height = StackHeight(src_row, src_col);
   int dest_height = StackHeight(dest_row, dest_col);
