@@ -63,7 +63,7 @@ var lyngkModule = (function() {
     White: "gray"
   };
   var c=document.getElementById("lyngkboard");
-  var ctx=c.getContext("2d");
+  var context=c.getContext("2d");
   var letterToColor = {
     'R': "Red",
     'K': "Black",
@@ -73,10 +73,11 @@ var lyngkModule = (function() {
     'J': "White",
     '-': "Empty"
   };
+  var kTestString = 'KRI|-|G|-|GR|-|IG|KJ|-|-|-|-|RK|-|J|KB|I|-|-|-|-|K|G|-|I|GBI|-|I|GIJR|B|-|RB|RKBI|G|RK|-|GB|-|-|RB|-|BK|-';
 
-  my.startUp = drawBoard();
+  my.startUp = drawBoard(context);
 
-  function drawBoard() {
+  function drawBoard(ctx) {
     ctx.clearRect(0, 0, c.width, c.height);
     var colorCount = {
       Ivory: 8,
@@ -86,56 +87,23 @@ var lyngkModule = (function() {
       Black: 8,
       White: 3
     };
-    //var shuffled = shuffleArray(nodeList);
-
+    
     for (var i = 0; i < verticalX.length; i++) {
-      drawLine((xRoot * verticalX[i] + padding), (yOffset * verticalY1[i] + padding), (xRoot * verticalX[i] + padding), (yOffset * verticalY2[i] + padding));
+      drawLine((xRoot * verticalX[i] + padding), (yOffset * verticalY1[i] + padding), (xRoot * verticalX[i] + padding), (yOffset * verticalY2[i] + padding), ctx);
     }
     for (var j = 0; j < diagonalDestination.length; j++) {
-      drawLine((xRoot * diagonalSourceCoords[j][0] + padding), (yOffset * diagonalSourceCoords[j][1] + padding), (xRoot * diagonalDestination[j][0] + padding), (yOffset * diagonalDestination[j][1] + padding));
+      drawLine((xRoot * diagonalSourceCoords[j][0] + padding), (yOffset * diagonalSourceCoords[j][1] + padding), (xRoot * diagonalDestination[j][0] + padding), (yOffset * diagonalDestination[j][1] + padding), ctx);
     }
-    /*for (var k = 0; k < nodeList.length; k++) {
-      var coordinates = boardPosition[nodeList[k]];
-      if (k < 8) {
-        drawGamePiece((xRoot * coordinates[0] + padding), (yOffset * coordinates[1] + padding), "Ivory");
-        colorCount.Ivory = colorCount.Ivory - 1;
-      }
-      else if (k < 16) {
-        drawGamePiece((xRoot * coordinates[0] + padding), (yOffset * coordinates[1] + padding), "Blue");
-        colorCount.Blue = colorCount.Blue - 1;
-      }
-      else if (k < 24) {
-        drawGamePiece((xRoot * coordinates[0] + padding), (yOffset * coordinates[1] + padding), "Red");
-        colorCount.Red = colorCount.Red - 1;
-      }
-      else if (k < 32) {
-        drawGamePiece((xRoot * coordinates[0] + padding), (yOffset * coordinates[1] + padding), "Green");
-        colorCount.Green = colorCount.Green - 1;
-      }
-      else if (k < 40) {
-        drawGamePiece((xRoot * coordinates[0] + padding), (yOffset * coordinates[1] + padding), "Black");
-        colorCount.Black = colorCount.Black - 1;
-      }
-      else {
-        drawGamePiece((xRoot * coordinates[0] + padding), (yOffset * coordinates[1] + padding), "White");
-        colorCount.White = colorCount.White - 1;
-      }
-    }
-    stackGamePiece((xRoot * boardPosition['E4'][0] + padding), (yOffset * boardPosition['E4'][1] + padding), 'Black', 2);
-    stackGamePiece((xRoot * boardPosition['E4'][0] + padding), (yOffset * boardPosition['E4'][1] + padding), 'Blue', 3);
-    stackGamePiece((xRoot * boardPosition['E4'][0] + padding), (yOffset * boardPosition['E4'][1] + padding), 'Green', 4);
-    stackGamePiece((xRoot * boardPosition['E4'][0] + padding), (yOffset * boardPosition['E4'][1] + padding), 'White', 5);
-    stackGamePiece((xRoot * boardPosition['E4'][0] + padding), (yOffset * boardPosition['E4'][1] + padding), 'Ivory', 6);*/
   }
 
-  function drawLine(x1, y1, x2, y2) {
+  function drawLine(x1, y1, x2, y2, ctx) {
 	  ctx.beginPath();
 	  ctx.moveTo(x1, y1);
 	  ctx.lineTo(x2, y2);
 	  ctx.stroke();
   }
 
-  function drawGamePiece(xcenter, ycenter, color) {
+  function drawGamePiece(xcenter, ycenter, color, ctx) {
     ctx.beginPath();
     ctx.arc(xcenter, ycenter, 10, 0, 2*Math.PI);
     ctx.fillStyle = colorValues[color];
@@ -143,9 +111,9 @@ var lyngkModule = (function() {
     ctx.stroke();
   }
 
-  function stackGamePiece(xcenter, ycenter, color, stackCount) {
+  function stackGamePiece(xcenter, ycenter, color, stackCount, ctx) {
     stackOffset = (stackCount - 1) * 5;
-    drawGamePiece(xcenter, ycenter - stackOffset, color);
+    drawGamePiece(xcenter, ycenter - stackOffset, color, ctx);
   }
 
   function shuffleArray(input) {
@@ -159,20 +127,20 @@ var lyngkModule = (function() {
     return inputArray;
   }
 
-  function translateBoardString(boardString) {
+  function translateBoardString(boardString, ctx) {
     var boardArray = boardString.split('|');
     for (var i = 0; i < boardArray.length; i++) {
       for (var j = 0; j < boardArray[i].length; j++) {
         var boardIndex = nodeList[i];
         var color = letterToColor[boardArray[i][j]];
         if (color != "Empty") {
-          stackGamePiece((xRoot * boardPosition[boardIndex][0] + padding), (yOffset * boardPosition[boardIndex][1] + padding), color, j + 1);
+          stackGamePiece((xRoot * boardPosition[boardIndex][0] + padding), (yOffset * boardPosition[boardIndex][1] + padding), color, j + 1, ctx);
         }
       }
     }
   }
 
-  translateBoardString('-|I|GJ|-|JIGK|I|B|GR|-|K|R|-|-|I-G|I|BJ|K|-R|-|-|G|-|-|B|-|-|RK|-|R|BIG|-R|-|B|-|I|I|-|K|-|G-|BK|K|RGKB|BR');
+  translateBoardString(kTestString, context);
   return my;
 })();
 

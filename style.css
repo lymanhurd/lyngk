@@ -1,12 +1,7 @@
-div {
-    width: 500px;
-}
-
 #lyngkboard {
   border: 2px solid black;
-  z-axis: -20;
 }
 
-#boardset {
+#board {
   position: relative;
 }
