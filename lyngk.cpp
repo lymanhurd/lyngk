@@ -19,9 +19,12 @@
 #include "sendmail.h"
 #include "strutl.h"
 
-#define MAX_STACK 5
+#define MAX_STACK 6
 #define EMPTY '.'
 #define JOKER 'J'
+
+#define NORMAL_MODE 0
+#define STACK6_MODE 1
 
 #define NUM_LINES 21
 #define LINE_LENGTH 7
@@ -32,15 +35,15 @@ const char* COLOR_LETTERS = "-IBRGKJ";
 int Lyngk::Init() {
   player_colors_.Init().Add(0).Add(0).Add(0).Add(0);
   stacks_.Init().Add(0).Add(0);
-  bool stack6_mode = false;
+  int game_mode = NORMAL_MODE;
   for (int i = 0 ; i < parameters.Count(); i++) {
     if (abbrev(parameters[i], "-stack6", 2)) {
-      stack6_mode = true; 
+      game_mode = STACK6_MODE; 
     } else {
       return Error("Invalid %s parameter '%s'", GameType(), parameters[i]);
     }
   }
-  game_mode_.Init().Add(stack6_mode);
+  game_mode_.Init().Add(game_mode);
 
   if (players.Count() != 2) {
     return Error("%s is a two player game.  %d cannot play.",
@@ -168,6 +171,19 @@ const char *Lyngk::MakeMove(const char *move) {
 
 // The game ends when neither player can move.
 int Lyngk::IsGameOver(const char *&winner) {
+  if (game_mode_[0] == STACK6_MODE) {
+    for (int row = 0; row < NUM_ROWS; row++) {
+      for (int col = 0; col < NUM_COLS; col++) {
+	if (OnBoard(row, col) && StackHeight(row, col) == 6) {
+	  int owner = StackOwner(row, col);
+	  if (owner != -1) {
+	    winner = players[owner];
+	    return 1;
+	  }
+	}
+      }
+    }
+  }
   if (CannotMove(0) && CannotMove(1)) {
     int winning_player = GetWinner();
     if (winning_player == -1) { // draw
@@ -261,10 +277,12 @@ int Lyngk::StackHeight(int row, int col) {
 }
 
 void Lyngk::ClaimStack(int player, int row, int col) {
-  if (StackHeight(row, col) == MAX_STACK && StackOwner(row, col) == player) {
-    stacks_[player] += 1;
-    for (int i = 0; i < MAX_STACK; i++) {
-      PutAt(row, col*MAX_STACK + i, EMPTY);
+  if (game_mode_[0] == NORMAL_MODE) {
+    if (StackHeight(row, col) == 5 && StackOwner(row, col) == player) {
+      stacks_[player] += 1;
+      for (int i = 0; i < 5; i++) {
+	PutAt(row, col * MAX_STACK + i, EMPTY);
+      }
     }
   }
 }
@@ -284,7 +302,11 @@ int Lyngk::CanMoveStack(int player,
 		 'a' + dest_col, '1' + dest_row);
   }
   if (GetAt(src_row, src_col * MAX_STACK) == 'J') {
-    return Error("You cannot move jokers independently.");
+    if (test_mode) {
+      return 0;
+    } else {
+      return Error("You cannot move jokers independently.");
+    }
   }
   int src_height = StackHeight(src_row, src_col);
   int dest_height = StackHeight(dest_row, dest_col);
@@ -296,11 +318,12 @@ int Lyngk::CanMoveStack(int player,
 	  '1' + dest_row);
 
   // check stack heights
-  if (src_height + dest_height > MAX_STACK) {
+  int max_height = game_mode_[0] == NORMAL_MODE ? 5 : 6;
+  if (src_height + dest_height > max_height) {
     if (test_mode) {
       return 0;
     } else {
-      return Error("%s: %s", base_error, "Combined stack exceeds maximum stack height.");
+      return Error("%s: %s %d.", base_error, "Combined stack exceeds maximum stack height", max_height);
     }
   }
   if (src_height  == 0 || dest_height == 0) {
@@ -475,7 +498,7 @@ int Lyngk::MoveStack(int player,
 	  GetAt(src_row, src_col * MAX_STACK + i));
     PutAt(src_row, src_col * MAX_STACK + i, EMPTY);
   }
-  // Remove a stack of if appropriate.
+  // Remove a stack of five, if appropriate.
   ClaimStack(player, dest_row, dest_col);
   return true;
 }
@@ -525,28 +548,14 @@ int Lyngk::StackOwner(int row, int col) {
   }
 }
 
-//    c7 e7 g7
-//      d6 f6
-//    c6 e6 g6
-//   b4 d5 f5 h4
-//    c5 e5 g5
-//   b3 d4 f4 h3
-// a1 c4 e4 g4 i1
-//   b2 d3 f3 h2
-//    c3 e3 g3
-//   b1 d2 f2 h1
-//    c2 e2 g2
-//      d1 f1
-//    c1 e1 g1
-
-// PrintBoard.
+// PrintBoard.  Eventually want to add an HTML option.
 void Lyngk::PrintBoard(FILE *fp) {
   PrintBoardASCII(fp);
 }
 
 void Lyngk::PrintBoardASCII(FILE *fp) {
-  if (game_mode_[0]) {
-    fprintf(fp, "Stack 6 Mode\n");
+  if (game_mode_[0] == STACK6_MODE) {
+    fprintf(fp, "Stack6 Mode\n");
   }
   fprintf(fp, "Available Colors: (%s)\n", AvailableColors());
   fprintf(fp, "%s: %d stacks (%s) claimed.\n", players[0], stacks_[0],
