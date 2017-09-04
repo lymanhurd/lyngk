@@ -1,3 +1,7 @@
+#boardstring {
+  display: none;
+}
+
 #lyngkboard {
   border: 2px solid black;
 }

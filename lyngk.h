@@ -50,10 +50,12 @@ class Lyngk: public Board2D {
  private:
 
   // ASCII Display Routines
-  virtual void PrintBoardASCII(FILE *fp);
+  void PrintBoardASCII(FILE *fp);
   void PrintDisplayRow(FILE* fp, int display_row);
   const char* ClaimedColors(int player);
   const char* AvailableColors();
+
+  void PrintBoardJS(FILE *fp);
 
   void ShufflePieces(int* array, int len);
   int StackHeight(int row, int col);

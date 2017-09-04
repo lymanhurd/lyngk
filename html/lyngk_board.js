@@ -73,8 +73,9 @@ var lyngkModule = (function() {
     'J': "White",
     '-': "Empty"
   };
-  var kTestString = 'KRI|-|G|-|GR|-|IG|KJ|-|-|-|-|RK|-|J|KB|I|-|-|-|-|K|G|-|I|GBI|-|I|GIJR|B|-|RB|RKBI|G|RK|-|GB|-|-|RB|-|BK|-';
+  var kTestString1 = 'KRI|-|G|-|GR|-|IG|KJ|-|-|-|-|RK|-|J|KB|I|-|-|-|-|K|G|-|I|GBI|-|I|GIJR|B|-|RB|RKBI|G|RK|-|GB|-|-|RB|-|BK|-';
 
+  var kTestString = 'G|B|K|K|R|K|I|I|K|G|J|K|K|B|I|B|G|R|G|K|R|G|K|J|B|R|R|B|G|J|G|I|G|B|R|B|I|I|R|B|I|R|I|';
   my.startUp = drawBoard(context);
 
   function drawBoard(ctx) {
@@ -94,6 +95,8 @@ var lyngkModule = (function() {
     for (var j = 0; j < diagonalDestination.length; j++) {
       drawLine((xRoot * diagonalSourceCoords[j][0] + padding), (yOffset * diagonalSourceCoords[j][1] + padding), (xRoot * diagonalDestination[j][0] + padding), (yOffset * diagonalDestination[j][1] + padding), ctx);
     }
+    var boardString = document.getElementById('boardstring').innerHTML;
+    translateBoardString(boardString, context);
   }
 
   function drawLine(x1, y1, x2, y2, ctx) {
@@ -139,8 +142,6 @@ var lyngkModule = (function() {
       }
     }
   }
-
-  translateBoardString(kTestString, context);
   return my;
 })();
 

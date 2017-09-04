@@ -3,6 +3,8 @@ lyngk
 
 #emacs backups
 *~
+\#*#
+.\#*
 
 # Prerequisites
 *.d
