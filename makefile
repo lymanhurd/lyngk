@@ -12,8 +12,5 @@ lyngk: lyngk_main.o lyngk.o $(COMMONOBJS)
 
 .PHONY:	clean
 clean:
-	rm -f yinsh lyngk *.o *~ \#*
+	rm -f lyngk *.o *~ \#*
 
-.PHONY:	cleangames
-cleangames:
-	rm -f /home/lhurd/pbmhome/etc/Lyngk.list /home/lhurd/pbmhome/games/Lyngk/*
