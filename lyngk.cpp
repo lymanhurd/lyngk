@@ -550,7 +550,7 @@ int Lyngk::StackOwner(int row, int col) {
 
 // PrintBoard.  Eventually want to add an HTML option.
 void Lyngk::PrintBoard(FILE *fp) {
-  PrintBoardJS(fp);
+  // PrintBoardJS(fp);
   PrintBoardASCII(fp);
 }
 
