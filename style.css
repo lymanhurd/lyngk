@@ -1,7 +1,29 @@
 #lyngkboard {
   border: 2px solid black;
+  position: absolute;
+  top: 5%;
+  left: 20%;
 }
 
 #board {
   position: relative;
+}
+
+#summaryandmoves {
+  text-align: center;
+  padding-left: 35%;
+}
+
+#moves {
+  text-align: right;
+  padding-right: 10%;
+  display: inline-table;
+}
+
+#colorcount {
+  text-align: center;
+}
+
+#boardstring {
+  padding-right: 5%;
 }
