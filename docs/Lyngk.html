@@ -44,8 +44,7 @@ The official rules can be found on the
 at boardgamegeek.com.
 </p>
 <p>
-What follows is a quick summary along with notation.  The board is illustrated
-here with a sample random initial setup:
+What follows is a quick rules summary along with notes on notation. The board is shown here with a sample random initial setup:
 </p>
 <p><pre>   A   B   C   D   E   F   G   H   I
    1   4   7   6   7   6   7   4   1
@@ -68,59 +67,61 @@ here with a sample random initial setup:
    1   1   1   1   1   1   1   1   1
 </pre>
 <p>
-A move consists of moving the contents of a stack at one intersection to
-another and optionally claiming an available color,
-e.g., <strong>b1-b2</strong> moving a stack from b1 to b2 (assuming both source
-and destination intersections are occupied) or <strong>R,b1-b2</strong> which
-claims the color red before making the same move.
+Columns are labeled with letters A-I and within each column the intersections
+are numbered consecutively from 1 to the number of intersections in that
+column. Intersections are denoted by a letter and number (e.g., "a1").
+</p>
+<p> 
+Initially, each intersection contains a random marker with colors one of:
+(Ivory, Blue, Red, Green, blacK, or Joker) abbreviated by the capitalized
+letter. There are eight pieces for each of the five main colors as well as
+three joker pieces (in the physical set, jokers are white with black
+dots). Jokers have special rules described below.
 </p>
 <p>
-The letters mark columns and the numbers indicate rows.  Intersections are
-denoted by a letter and number (e.g., "a1").  Each intersection contains a
-stack of markers with colors: (Ivory, Blue, Red, Green, blacK, Joker)
-abbreviated by the capitalized letter.  There are eight markers of the five
-main colors and three jokers (in the physical set, jokers are white with black
-dots).  Jokers have special rules outlined below.
+A move consists of moving a stack from one intersection to another, e.g., b1-b2
+moves the stack at b1 to top of the stack at b2.  Optionally, one can claim one
+of the five main colors before making a move; R,b1-b2 claims the color red
+before making the same stacks.  A player can claim up to two colors in the
+course of the game with the result that at least one color will always remain
+unclaimed/neutral.
 </p>
 <p>
-Stacks are moved as a unit and a stack can only be moved to an already occupied
-intersection within a straight line for which the intervening intersections are
-blank (the "Lyngk rule" described below provides an exception to this rule).
-The resultant stack must have no repeating colors and must be of height less
-than or equal to five.  A Joker cannot be moved independently and in a stack it
-can stand in for any of the five main colors.  A stack can have more than
-one joker which are then assumed to represent two missing colors.
+The resultant stack must not repeat colors and in the normal game once a stack
+reaches a height of five (one of each main color), it is removed from the board
+if the top marker has a color claimed by the current player.  The goal of the
+game is to accumulate stacks of one’s color.
 </p>
 <p>
-In the course of the game, players have the option of claiming one of the five
-main colors as long as it has not been claimed by their opponent up to a
-maximum of two claimed colors per player (i.e., the game will always have at
-least one neutral color).  Claiming a color can be done any time during the
-game and often it makes sense to wait to claim a color until it is
-strategically advantageous.
+Stacks are moved as a unit and can only be moved to an already occupied
+intersection within a straight line (the "Lyngk rule" described below provides
+an exception to this rule).  If there is empty space next to a stack it can
+move until it hits an occupied intersection.  Jokers in a stack can stand in
+for any of the five main colors. A stack can have more than one joker each of
+which is then assumed to represent a missing color up to a limit of five
+markers.  A stack consisting of a single joker cannot be moved.
 </p>
 <p>
-You cannot move a stack headed by a marker of a color claimed by one's
-opponent.  If the stack being moved is headed by a neutral marker, the stack
-must be moved onto a stack of height less than or equal to the height of the
-stack being moved.  A stack headed by a joker (which must be of height one)
-cannot be moved.
+There are additional restrictions depending on whether the top marker of a
+stack has been claimed by the current player, the opponent or is neutral.  A
+player cannot move a stack topped by a marker of a color claimed by their
+opponent. If a stack being moved is headed by a neutral marker, the stack must
+be moved onto a stack of height less than or equal to the height of the stack
+being moved.  If a stack is headed by a marker of a color you have claimed, the
+height restrictions do not apply: a stack can be moved onto any other stack
+provided that the height is five or less and colors are not duplicated.
 </p>
 <p>
-If a stack is headed by a marker of a color you control, the height
-restrictions no longer apply, i.e., a stack of height one could be moved onto a
-stack of height four, however the rule that colors cannot be duplicated
-remains.
-</p>
-<p>
-Another possibility for a stack you control is to make a <strong>lyngk</strong>
-move.  In this case, you can not only choose as a destination an intersection
-within a straight line, but also if there is a stack within an unobstructed
-line headed by a piece of the same color, you can proceed to any intersection
-that could be reached from that stack (bouncing off that intersection) and this
-rule can be applied recursively, i.e., you can make more than one bounce.  In
-the following board position, assuming that player 1 controls, blue, they can
-move the stack from b4 to e2 because there are blue stacks at b1 and c3.
+In addition to moving stacks in straight lines, another possibility for a stack
+headed by a marker of a color you have claimed is to make
+a <strong>lyngk</strong> move. If there is a stack within an unobstructed line
+headed by a piece of the same color, you can proceed to any intersection that
+could be reached from <em>that</em> stack (bouncing off that intersection) and
+this rule can be applied multiple times, i.e., you can make more than one
+bounce. In the following board position, assuming that player 1 has claimed the
+color blue, they can move the stack from <strong>b4</strong>
+to <strong>e2</strong> via blue stacks at <strong>b1</strong>
+and <strong>c3</strong>.
 </p>
 <pre>
    A   B   C   D   E   F   G   H   I
@@ -144,14 +145,14 @@ move the stack from b4 to e2 because there are blue stacks at b1 and c3.
    1   1   1   1   1   1   1   1   1
 </pre>
 <p>
-If a player cannot move, they are forced to pass.  Note that if a player has
-not claimed both of their colors, and by claiming a color they would be able to
-move, they must do so; voluntary passing is not allowed.  If neither player can
-move, the game is over and the winner is the player who has removed the most
-stacks of five.  If both player has the same number of stacks of five, the
-player who has the most stacks of four under their control and if that is still
-tied, stacks of three, etc.  If this procedure does not break the tie, the game
-is a draw.
+If a player finds that they cannot make any legal move, they are forced to
+pass. Note that if a player has not claimed both of their colors, and by
+claiming a color they would be able to move, they must do so; voluntary passing
+is not allowed. If neither player can move, the game is over and the winner is
+the player who has removed the most stacks of five. If both players have the
+same number of stacks of five, the player who has the most stacks of four
+headed by markers of colors they have claimed and if that is still tied, stacks
+of three, etc. If this procedure does not break the tie, the game is a draw.
 </p>
 <p>
 In <strong>stack6</strong> mode, additional rules are added.  Stacks of height
