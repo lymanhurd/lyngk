@@ -11,6 +11,11 @@
 <body>
   <html>
     <body>
+      <div id="unclaimed_label">
+        <h3>
+          Unclaimed colors:
+        </h3>
+      </div>
       <div id ='summaryandmoves'>
         <h1>Summary of Lyngk Board 191</h1>
 
@@ -28,11 +33,22 @@
         <div id ='colorcount'>
           <p>Available Colors: (Ivory, Blue, Green, blacK)</p>
           <p>p1: 0 stacks () claimed.</p>
+          <br>
+          <br>
           <p>p2: 0 stacks (Red) claimed.</p>
         </div>
         <div id='boardstring'>|B|K|KGR||K|I|I|K|G|J|K|K|B|I|B|G|R|G|K|R|G|K|J|B|R|R|B|G|J|G|I|G|B|R|B|I|I|R|B|I|R|I|</div>
       </div>
       <canvas width=400 height=400 id="lyngkboard">
+        Your browser does not support the HTML5
+      </canvas>
+      <canvas width=80 height=400 id="unclaimed">
+          Your browser does not support the HTML5
+        </canvas>
+      <canvas width=200 height=50 id="player1claimed">
+        Your browser does not support the HTML5
+      </canvas>
+      <canvas width=200 height=50 id="player2claimed">
         Your browser does not support the HTML5
       </canvas>
       <script src="./lyngk_board.js"></script>

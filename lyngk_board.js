@@ -97,6 +97,24 @@ var lyngkModule = (function() {
     }
     var boardString = document.getElementById('boardstring').innerHTML;
     translateBoardString(boardString, context);
+    drawUnclaimedPiece('R');
+    drawUnclaimedPiece('K');
+    drawUnclaimedPiece('B');
+    drawUnclaimedPiece('I');
+    drawUnclaimedPiece('G');
+    drawUnclaimedPiece('J');
+    drawClaimedPiece('R', 1);
+    drawClaimedPiece('K', 1);
+    drawClaimedPiece('B', 1);
+    drawClaimedPiece('I', 1);
+    drawClaimedPiece('G', 1);
+    drawClaimedPiece('J', 1);
+    drawClaimedPiece('R', 2);
+    drawClaimedPiece('K', 2);
+    drawClaimedPiece('B', 2);
+    drawClaimedPiece('I', 2);
+    drawClaimedPiece('G', 2);
+    drawClaimedPiece('J', 2);
   }
 
   function drawLine(x1, y1, x2, y2, ctx) {
@@ -110,6 +128,71 @@ var lyngkModule = (function() {
     ctx.beginPath();
     ctx.arc(xcenter, ycenter, 10, 0, 2*Math.PI);
     ctx.fillStyle = colorValues[color];
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function drawUnclaimedPiece(color) {
+    var board =document.getElementById("unclaimed");
+    var ctx=board.getContext("2d");
+    var piecePosition = 0;
+    switch(color) {
+      case 'R':
+        piecePosition = 1;
+        break;
+      case 'K':
+        piecePosition = 2;
+        break;
+      case 'B':
+        piecePosition = 3;
+        break;
+      case 'I':
+        piecePosition = 4;
+        break;
+      case 'G':
+        piecePosition = 5;
+        break;
+    }
+    ctx.beginPath();
+    ctx.arc(40, piecePosition * 50, 10, 0, 2*Math.PI);
+    ctx.fillStyle = colorValues[letterToColor[color]];
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function drawClaimedPiece(color, boardNumber) {
+    boardLabel = '';
+    switch(boardNumber) {
+      case 1:
+        boardLabel = "player1claimed";
+        break;
+      case 2:
+        boardLabel = "player2claimed";
+        break;
+    }
+    var board =document.getElementById(boardLabel);
+    var ctx=board.getContext("2d");
+    var piecePosition = 0;
+    switch(color) {
+      case 'R':
+        piecePosition = 1;
+        break;
+      case 'K':
+        piecePosition = 2;
+        break;
+      case 'B':
+        piecePosition = 3;
+        break;
+      case 'I':
+        piecePosition = 4;
+        break;
+      case 'G':
+        piecePosition = 5;
+        break;
+    }
+    ctx.beginPath();
+    ctx.arc(piecePosition * 29, 25, 10, 0, 2*Math.PI);
+    ctx.fillStyle = colorValues[letterToColor[color]];
     ctx.fill();
     ctx.stroke();
   }
