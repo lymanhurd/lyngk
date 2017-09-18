@@ -1,4 +1,4 @@
-#boardstring {
+.hiddenHTML {
   display: none;
 }
 
@@ -9,7 +9,7 @@
   left: 20%;
 }
 
-#unclaimed {
+#unclaimedCanvas {
   position: absolute;
   border: 2px solid black;
   top: 10%;
@@ -23,7 +23,7 @@
   width: 50px;
 }
 
-#player1claimed {
+#player1canvas {
   position: absolute;
   border: 2px solid black;
   right: 27%;
@@ -31,7 +31,7 @@
   background: lightgray;
 }
 
-#player2claimed {
+#player2canvas {
   position: absolute;
   border: 2px solid black;
   right: 27%;

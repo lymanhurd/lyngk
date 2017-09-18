@@ -29,26 +29,20 @@
 	       <tr><td>9 a1-b3</td><td>10 R,b4-b3</td></tr>
 	       <tr><td>11 a1-b3</td><td>12 R,b4-b3</td></tr>
         </table>
-
-        <div id ='colorcount'>
-          <p>Available Colors: (Ivory, Blue, Green, blacK)</p>
-          <p>p1: 0 stacks () claimed.</p>
-          <br>
-          <br>
-          <p>p2: 0 stacks (Red) claimed.</p>
-        </div>
-        <div id='boardstring'>|B|K|KGR||K|I|I|K|G|J|K|K|B|I|B|G|R|G|K|R|G|K|J|B|R|R|B|G|J|G|I|G|B|R|B|I|I|R|B|I|R|I|</div>
+        <div id='player1claimed' class='hiddenHTML'>'GK'</div>
+        <div id='player2claimed' class='hiddenHTML'>'RB'</div>
+        <div id='boardstring' class='hiddenHTML'>|B|K|KGR||K|I|I|K|G|J|K|K|B|I|B|G|R|G|K|R|G|K|J|B|R|R|B|G|J|G|I|G|B|R|B|I|I|R|B|I|R|I|</div>
       </div>
       <canvas width=400 height=400 id="lyngkboard">
         Your browser does not support the HTML5
       </canvas>
-      <canvas width=80 height=400 id="unclaimed">
+      <canvas width=80 height=400 id="unclaimedCanvas">
           Your browser does not support the HTML5
         </canvas>
-      <canvas width=200 height=50 id="player1claimed">
+      <canvas width=200 height=50 id="player1canvas">
         Your browser does not support the HTML5
       </canvas>
-      <canvas width=200 height=50 id="player2claimed">
+      <canvas width=200 height=50 id="player2canvas">
         Your browser does not support the HTML5
       </canvas>
       <script src="./lyngk_board.js"></script>

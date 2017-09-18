@@ -73,6 +73,7 @@ var lyngkModule = (function() {
     'J': "White",
     '-': "Empty"
   };
+  var colorArray = ['R', 'K', 'B', 'I', 'G'];
   var kTestString1 = 'KRI|-|G|-|GR|-|IG|KJ|-|-|-|-|RK|-|J|KB|I|-|-|-|-|K|G|-|I|GBI|-|I|GIJR|B|-|RB|RKBI|G|RK|-|GB|-|-|RB|-|BK|-';
 
   var kTestString = 'G|B|K|K|R|K|I|I|K|G|J|K|K|B|I|B|G|R|G|K|R|G|K|J|B|R|R|B|G|J|G|I|G|B|R|B|I|I|R|B|I|R|I|';
@@ -97,24 +98,7 @@ var lyngkModule = (function() {
     }
     var boardString = document.getElementById('boardstring').innerHTML;
     translateBoardString(boardString, context);
-    drawUnclaimedPiece('R');
-    drawUnclaimedPiece('K');
-    drawUnclaimedPiece('B');
-    drawUnclaimedPiece('I');
-    drawUnclaimedPiece('G');
-    drawUnclaimedPiece('J');
-    drawClaimedPiece('R', 1);
-    drawClaimedPiece('K', 1);
-    drawClaimedPiece('B', 1);
-    drawClaimedPiece('I', 1);
-    drawClaimedPiece('G', 1);
-    drawClaimedPiece('J', 1);
-    drawClaimedPiece('R', 2);
-    drawClaimedPiece('K', 2);
-    drawClaimedPiece('B', 2);
-    drawClaimedPiece('I', 2);
-    drawClaimedPiece('G', 2);
-    drawClaimedPiece('J', 2);
+    populateClaimedCanvases();
   }
 
   function drawLine(x1, y1, x2, y2, ctx) {
@@ -133,7 +117,7 @@ var lyngkModule = (function() {
   }
 
   function drawUnclaimedPiece(color) {
-    var board =document.getElementById("unclaimed");
+    var board =document.getElementById("unclaimedCanvas");
     var ctx=board.getContext("2d");
     var piecePosition = 0;
     switch(color) {
@@ -164,10 +148,10 @@ var lyngkModule = (function() {
     boardLabel = '';
     switch(boardNumber) {
       case 1:
-        boardLabel = "player1claimed";
+        boardLabel = "player1canvas";
         break;
       case 2:
-        boardLabel = "player2claimed";
+        boardLabel = "player2canvas";
         break;
     }
     var board =document.getElementById(boardLabel);
@@ -195,6 +179,31 @@ var lyngkModule = (function() {
     ctx.fillStyle = colorValues[letterToColor[color]];
     ctx.fill();
     ctx.stroke();
+  }
+
+  function populateClaimedCanvases() {
+    var unclaimedBoard = document.getElementById("unclaimedCanvas");
+    var unclaimedctx = unclaimedBoard.getContext("2d");
+    unclaimedctx.clearRect(0, 0, unclaimedBoard.width, unclaimedBoard.height);
+    var claimedBoard1 = document.getElementById("player1canvas");
+    var player1ctx = claimedBoard1.getContext("2d");
+    player1ctx.clearRect(0, 0, claimedBoard1.width, claimedBoard1.height);
+    var claimedBoard2 = document.getElementById("player2canvas");
+    var player2ctx = claimedBoard2.getContext("2d");
+    player2ctx.clearRect(0, 0, claimedBoard2.width, claimedBoard2.height);
+    var stringArray1 = document.getElementById('player1claimed').innerHTML.split('');
+    var stringArray2 = document.getElementById('player2claimed').innerHTML.split('');
+    for(var i = 0; i < colorArray.length; i++) {
+      if (stringArray1.indexOf(colorArray[i]) != -1) {
+        drawClaimedPiece(colorArray[i], 1);
+      }
+      else if (stringArray2.indexOf(colorArray[i]) != -1) {
+        drawClaimedPiece(colorArray[i], 2);
+      }
+      else {
+        drawUnclaimedPiece(colorArray[i]);
+      }
+    }
   }
 
   function stackGamePiece(xcenter, ycenter, color, stackCount, ctx) {
