@@ -116,35 +116,17 @@ var lyngkModule = (function() {
     ctx.stroke();
   }
 
-  function drawUnclaimedPiece(color) {
+  function drawUnclaimedPiece(color, piecePosition) {
     var board =document.getElementById("unclaimedCanvas");
     var ctx=board.getContext("2d");
-    var piecePosition = 0;
-    switch(color) {
-      case 'R':
-        piecePosition = 1;
-        break;
-      case 'K':
-        piecePosition = 2;
-        break;
-      case 'B':
-        piecePosition = 3;
-        break;
-      case 'I':
-        piecePosition = 4;
-        break;
-      case 'G':
-        piecePosition = 5;
-        break;
-    }
     ctx.beginPath();
-    ctx.arc(40, piecePosition * 50, 10, 0, 2*Math.PI);
+    ctx.arc(40, piecePosition * 62, 10, 0, 2*Math.PI);
     ctx.fillStyle = colorValues[letterToColor[color]];
     ctx.fill();
     ctx.stroke();
   }
 
-  function drawClaimedPiece(color, boardNumber) {
+  function drawClaimedPiece(color, boardNumber, piecePosition) {
     boardLabel = '';
     switch(boardNumber) {
       case 1:
@@ -156,24 +138,6 @@ var lyngkModule = (function() {
     }
     var board =document.getElementById(boardLabel);
     var ctx=board.getContext("2d");
-    var piecePosition = 0;
-    switch(color) {
-      case 'R':
-        piecePosition = 1;
-        break;
-      case 'K':
-        piecePosition = 2;
-        break;
-      case 'B':
-        piecePosition = 3;
-        break;
-      case 'I':
-        piecePosition = 4;
-        break;
-      case 'G':
-        piecePosition = 5;
-        break;
-    }
     ctx.beginPath();
     ctx.arc(piecePosition * 29, 25, 10, 0, 2*Math.PI);
     ctx.fillStyle = colorValues[letterToColor[color]];
@@ -193,15 +157,21 @@ var lyngkModule = (function() {
     player2ctx.clearRect(0, 0, claimedBoard2.width, claimedBoard2.height);
     var stringArray1 = document.getElementById('player1claimed').innerHTML.split('');
     var stringArray2 = document.getElementById('player2claimed').innerHTML.split('');
+    var player1count = 1;
+    var player2count = 1;
+    var unclaimedCount = 1;
     for(var i = 0; i < colorArray.length; i++) {
       if (stringArray1.indexOf(colorArray[i]) != -1) {
-        drawClaimedPiece(colorArray[i], 1);
+        drawClaimedPiece(colorArray[i], 1, player1count);
+        player1count += 1;
       }
       else if (stringArray2.indexOf(colorArray[i]) != -1) {
-        drawClaimedPiece(colorArray[i], 2);
+        drawClaimedPiece(colorArray[i], 2, player2count);
+        player2count += 1;
       }
       else {
-        drawUnclaimedPiece(colorArray[i]);
+        drawUnclaimedPiece(colorArray[i], unclaimedCount);
+        unclaimedCount += 1;
       }
     }
   }
