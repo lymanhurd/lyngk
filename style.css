@@ -25,17 +25,21 @@
 
 #player1div {
   position: absolute;
-  right: 31%;
+  width: 400px;
+  right: 20%;
   top: 35%;
 }
 
 #player2div {
   position: absolute;
-  right: 31%;
+  width: 400px;
+  right: 20%;
   top: 45%;
 }
 
 #player1canvas {
+  float: right;
+  margin-right: 0 1.5%;
   position: absolute;
   border: 2px solid black;
   right: 26%;
@@ -44,11 +48,18 @@
 }
 
 #player2canvas {
+  float: right;
+  margin-right: 0 1.5%;
   position: absolute;
   border: 2px solid black;
   right: 26%;
   top: 45%;
   background: lightgray;
+}
+
+.claimedP {
+  float: left;
+  margin-left: 0 1.5%;
 }
 
 #board {
