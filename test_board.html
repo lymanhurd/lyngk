@@ -9,50 +9,46 @@
 </head>
 
 <body>
-  <html>
-    <body>
-      <div id="unclaimed_label">
-        <h3>
-          Unclaimed colors:
-        </h3>
-      </div>
-      <div id ='summaryandmoves'>
-        <h1>Lyngk game 191</h1>
+  <h3 id="unclaimed_label">Unclaimed colors:</h3>
+  <div id="summaryandmoves">
+    <h1>Lyngk game 191</h1>
 
-        <p>It is p1&apos;s turn.</p>
-        <div id ='movesDiv'>
-          <table id ='moves'>
-	         <tr><th>p1</th><th>p2</th></tr>
-	         <tr><td>1 a1-b3</td><td>2 R,b4-b3</td></tr>
-	         <tr><td>3 a1-b3</td><td>4 R,b4-b3</td></tr>
-	         <tr><td>5 a1-b3</td><td>6 R,b4-b3</td></tr>
-	         <tr><td>7 a1-b3</td><td>8 R,b4-b3</td></tr>
-	         <tr><td>9 a1-b3</td><td>10 R,b4-b3</td></tr>
-	         <tr><td>11 a1-b3</td><td>12 R,b4-b3</td></tr>
-          </table>
-        </div>
-        <div id='player1claimed' class='hiddenHTML'>RK</div>
-        <div id='player2claimed' class='hiddenHTML'>BI</div>
-        <div id='boardstring' class='hiddenHTML'>|B|K|KGR||K|I|I|K|G|J|K|K|B|I|B|G|R|G|K|R|G|K|J|B|R|R|B|G|J|G|I|G|B|R|B|I|I|R|B|I|R|I|</div>
-      </div>
-      <canvas width=400 height=400 id="lyngkboard">
-        Your browser does not support HTML5 canvases.
-      </canvas>
-      <canvas width=80 height=400 id="unclaimedCanvas">
-          Your browser does not support HTML5 canvases.
-      </canvas>
-      <div id='player1div'>
-        <p class='claimedP'>Claimed by Programmer Glenn:</p>
-        <canvas width=85 height=50 id="player1canvas">
-          Your browser does not support HTML5 canvases.
-        </canvas>
-      </div>
-      <div id='player2div'>
-        <p class='claimedP'>Claimed by Code Guru Lyman:</p>
-        <canvas width=85 height=50 id="player2canvas">
-          Your browser does not support HTML5 canvases.
-        </canvas>
-      </div>
-      <script src="./lyngk_board.js"></script>
+    <p>It is p1&#39;s turn.</p>
+  </div>
+  <div id="movesDiv">
+    <table id="moves">
+	    <tr><th>p1</th><th>p2</th></tr>
+	    <tr><td>1 a1-b3</td><td>2 R,b4-b3</td></tr>
+	    <tr><td>3 a1-b3</td><td>4 R,b4-b3</td></tr>
+	    <tr><td>5 a1-b3</td><td>6 R,b4-b3</td></tr>
+	    <tr><td>7 a1-b3</td><td>8 R,b4-b3</td></tr>
+	    <tr><td>9 a1-b3</td><td>10 R,b4-b3</td></tr>
+	    <tr><td>11 a1-b3</td><td>12 R,b4-b3</td></tr>
+    </table>
+  </div>
+  <div id="player1claimed" class="hiddenHTML">RK</div>
+  <div id="player2claimed" class="hiddenHTML">BI</div>
+  <div id="boardstring" class="hiddenHTML">|B|K|KGR||K|I|I|K|G|J|K|K|B|I|B|G|R|G|K|R|G|K|J|B|R|R|B|G|J|G|I|G|B|R|B|I|I|R|B|I|R|I|</div>
+  </div>
+  <canvas width="400" height="400" id="lyngkboard">
+    Your browser does not support HTML5 canvases.
+  </canvas>
+  <canvas width="80" height="400" id="unclaimedCanvas">
+    Your browser does not support HTML5 canvases.
+  </canvas>
+  <div id="claimedSection1">
+    <p class="claimedP">Claimed by Programmer Glenn:</p>
+    <canvas width="85" height="50" id="player1canvas">
+      Your browser does not support HTML5 canvases.
+    </canvas>
+  </div>
+  <div id="claimedSection2">
+    <p class="claimedP">Claimed by Code Guru Lyman:</p>
+    <canvas width="85" height="50" id="player2canvas">
+      Your browser does not support HTML5 canvases.
+    </canvas>
+  </div>
+  <script src="./lyngk_board.js"></script>
+  <noscript>Your browser does not support Javascript!</noscript>
 </body>
 </html>
